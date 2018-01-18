@@ -204,6 +204,13 @@ class DattutdutModel(BaseModel):
         lst, prj, geo = utils.read_lst_img(config_file['Imagery']['inputLST'], 
                                            na_values=-99.0)
         
+        # This mask removes all unwanted items such as trucks from the imagery.
+        # It requires a image with a 0 and 1 mask.
+        if config_file['truck_mask']:
+            mask, _, _ = utils.read_lst_img(config_file['Imagery']['truck_mask'], 
+                                               na_values=0.0)
+            lst[np.isnan(mask)] = np.nan
+            
         # Check if any ArcGIS NaN values are in the array. Remove all small
         # values.
         lst[lst <= -99] = np.nan

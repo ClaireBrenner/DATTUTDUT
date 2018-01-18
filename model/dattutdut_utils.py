@@ -34,8 +34,13 @@ def read_lst_img(img_path, na_values=None):
         lst = fid.GetRasterBand(1).ReadAsArray()
         prj = fid.GetProjection()
         geo = fid.GetGeoTransform()
-        if na_values:
+        
+        if lst.dtype == 'uint8':
+            lst = lst.astype('float32')
+            
+        if na_values is not None:
             lst[lst==na_values] = np.nan
+            
         return lst, prj, geo
 
 def calc_emis_atm(ea,ta):
